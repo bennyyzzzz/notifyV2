@@ -1,0 +1,33 @@
+{
+  "name": "notify",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.9.1",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "eslint .",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:security": "vitest run --config tests/security/vitest.config.ts",
+    "db:generate": "pnpm --filter @notify/db generate",
+    "db:migrate": "pnpm --filter @notify/db migrate:deploy",
+    "dev:api": "pnpm --filter @notify/api dev",
+    "dev:worker": "pnpm --filter @notify/worker dev",
+    "openapi": "pnpm --filter @notify/api openapi"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.5",
+    "@vitest/coverage-v8": "5.0.3",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "turbo": "2.11.7",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "5.0.3"
+  }
+}

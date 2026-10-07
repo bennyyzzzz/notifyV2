@@ -1,0 +1,23 @@
+node_modules/
+dist/
+coverage/
+.turbo/
+*.log
+*.tsbuildinfo
+
+# Secrets: never commit environment files (V1-09)
+.env
+.env.*
+!.env.example
+
+# Generated
+packages/db/src/generated/
+
+# Firebase service accounts must never touch the repository
+*service-account*.json
+*-firebase-adminsdk-*.json
+
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json

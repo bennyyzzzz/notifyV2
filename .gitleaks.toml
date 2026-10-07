@@ -1,0 +1,27 @@
+title = "Notify gitleaks config"
+
+[extend]
+useDefault = true
+
+# Notify-specific secret formats.
+[[rules]]
+id = "notify-server-key"
+description = "Notify server key"
+regex = '''sk_(live|test)_[A-Za-z0-9_-]{32,}'''
+tags = ["notify", "key"]
+
+[[rules]]
+id = "notify-encryption-keyring"
+description = "Notify ENCRYPTION_KEYS value"
+regex = '''ENCRYPTION_KEYS\s*=\s*[a-z0-9_-]+:[A-Za-z0-9+/]{43}='''
+tags = ["notify", "key"]
+
+[[rules]]
+id = "firebase-service-account"
+description = "Firebase/Google service account private key"
+regex = '''"private_key"\s*:\s*"-----BEGIN PRIVATE KEY-----'''
+tags = ["firebase", "key"]
+
+[allowlist]
+description = "Test fixtures with obviously fake material"
+paths = ['''(^|/)node_modules/''', '''(^|/)dist/''']

@@ -1,0 +1,10 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "tests/*"
+
+# Native build scripts are opt-in (supply-chain hardening).
+allowBuilds:
+  '@prisma/engines': true
+  prisma: true
+  esbuild: true
