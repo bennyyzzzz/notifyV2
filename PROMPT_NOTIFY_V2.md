@@ -636,6 +636,84 @@ Cada fase só termina com: build verde, testes verdes, lint/typecheck limpos, RE
 6. **Eventos e automações**: SDK v2, ingestão, dispositivos com consentimento, automações com delay real, condições, cancelamento, quiet hours, frequency caps, debug ao vivo.
 7. **Métricas, LGPD e operação**: dashboard, exportação, jobs de retenção, endpoint de titular, alertas, threat model, runbook de deploy e de incidente, teste de carga.
 
+### 13.1 Registro de andamento
+
+> Atualize esta planilha ao final de cada fase.
+> Legenda: ✅ feito e verificado · ⚠️ feito, mas não executado/verificado · 🟡 base pronta (schema/infra), falta a funcionalidade · ⏳ a fazer
+
+**Resumo por fase**
+
+| Fase | Status | Concluída em | Observação |
+|---|---|---|---|
+| 1. Fundação | ✅ (com ressalvas ⚠️) | 2026-10-07 | 110 testes + 8 de integração (PostgreSQL 16). Docker e CI escritos, mas ainda não executados. |
+| 2. Identidade e acesso | ⏳ | — | Tabelas já existem no schema (usuários, sessões, convites, MFA, auditoria). |
+| 3. Painéis e integrações | ⏳ | — | Schema e criptografia em envelope já prontos. |
+| 4. Campanhas e IA | ⏳ | — | — |
+| 5. Fila e envio | ⏳ | — | Schema pronto; o worker ainda não tem BullMQ. |
+| 6. Eventos e automações | ⏳ | — | Schema pronto; rota `/v1/ingest/*` já está na allowlist pública. |
+| 7. Métricas, LGPD e operação | ⏳ | — | Inventário de dados inicial já escrito. |
+
+**Itens por fase**
+
+| Fase | Item | Status | Evidência / observação |
+|---|---|---|---|
+| 1 | Monorepo (pnpm + Turborepo, TS estrito, ESLint) | ✅ | `package.json`, `turbo.json`, `eslint.config.js` |
+| 1 | CI completo (lint, typecheck, testes, audit, Semgrep, Gitleaks, Trivy, build) | ⚠️ | `.github/workflows/ci.yml` escrito; nunca rodou no GitHub |
+| 1 | Docker Compose e imagens multi-stage | ⚠️ | `Dockerfile`, `docker-compose.yml`; não construídos (sem Docker no ambiente). `pnpm deploy` testado |
+| 1 | Validação de env na inicialização | ✅ | `packages/shared/src/server/env.ts`; recusa segredos fracos |
+| 1 | Logger com redact | ✅ | `packages/shared/src/server/logger.ts` |
+| 1 | Erros RFC 7807 | ✅ | `apps/api/src/plugins/error-handler.ts` |
+| 1 | Prisma + PostgreSQL (schema da seção 5 + migrações) | ✅ | Migrações aplicadas em PG16 real, sem drift |
+| 1 | Extensão de tenant | ✅ | `packages/db/src/tenant`; FKs compostas e triggers no banco |
+| 1 | Pacote `crypto` (AES-256-GCM em envelope, rotação) | ✅ | `packages/crypto`; 100% de cobertura |
+| 1 | API: negar por padrão, helmet, CORS, rate limit, health checks | ✅ | `apps/api`; 17 testes |
+| 1 | Worker: esqueleto com desligamento gracioso | ✅ | `apps/worker`; BullMQ fica para a Fase 5 |
+| 1 | README, ADRs, SECURITY.md | ✅ | `docs/decisions/0001`–`0006` |
+| 2 | Usuários e organizações | 🟡 | Tabelas prontas |
+| 2 | Convites (token de uso único, 72 h) | 🟡 | Tabela `one_time_tokens` |
+| 2 | Login (argon2id, rate limit, bloqueio progressivo) | ⏳ | — |
+| 2 | Refresh token rotativo com detecção de reuso | 🟡 | Tabela `refresh_tokens` |
+| 2 | MFA TOTP + códigos de recuperação | 🟡 | Tabela `mfa_recovery_codes` |
+| 2 | Reset de senha | ⏳ | — |
+| 2 | Tela/endpoints "Minhas sessões" | ⏳ | — |
+| 2 | CLI do primeiro master | ⏳ | — |
+| 2 | Policies + testes da matriz 6.2 | ⏳ | — |
+| 2 | Auditoria (gravação) | 🟡 | Tabela append-only pronta |
+| 2 | Início do frontend (`apps/web`): login | ⏳ | — |
+| 3 | CRUD de painéis | ⏳ | — |
+| 3 | Membros do painel | 🟡 | FK garante membro da organização |
+| 3 | Configurações (domínios, UTM, limites, quiet hours, eventos) | ⏳ | — |
+| 3 | Integração Firebase (upload no servidor + verificação `validate_only`) | 🟡 | Criptografia e unicidade por projeto prontas |
+| 3 | Chaves de ingestão e de servidor | ⏳ | — |
+| 4 | Wizard de campanha | ⏳ | — |
+| 4 | Geração com IA (saída estruturada, validação, cotas) | ⏳ | — |
+| 4 | Regras de conteúdo (palavras e caracteres) | ⏳ | — |
+| 4 | URL / deep link / UTM | ⏳ | — |
+| 4 | Preview Android/iOS | ⏳ | — |
+| 5 | Máquina de estados das notificações | ⏳ | — |
+| 5 | Agendamento | ⏳ | — |
+| 5 | Worker BullMQ | ⏳ | — |
+| 5 | Envio FCM com retry e idempotência | ⏳ | — |
+| 5 | Listas de público via CSV | ⏳ | — |
+| 5 | Aprovação de envio em massa | ⏳ | — |
+| 5 | Histórico | ⏳ | — |
+| 6 | SDK v2 | ⏳ | — |
+| 6 | Ingestão de eventos | ⏳ | — |
+| 6 | Dispositivos com consentimento | ⏳ | — |
+| 6 | Automações com delay real, condições e cancelamento | ⏳ | — |
+| 6 | Quiet hours e frequency caps | ⏳ | — |
+| 6 | Debug de eventos ao vivo | ⏳ | — |
+| 7 | Dashboard | ⏳ | — |
+| 7 | Exportação CSV | ⏳ | — |
+| 7 | Jobs de retenção | ⏳ | — |
+| 7 | Endpoint de titular (LGPD) | ⏳ | — |
+| 7 | Alertas | ⏳ | — |
+| 7 | Threat model (STRIDE) | ⏳ | — |
+| 7 | Runbooks de deploy e de incidente | ⏳ | — |
+| 7 | Teste de carga (k6) | ⏳ | — |
+
+**Regressões V1 (seção 3)**: 21 testes passando e 17 marcados como `todo`. Todos os itens V1-01…V1-30 estão rastreados em `tests/security/regressions/`.
+
 ---
 
 ## 14. Definição de pronto (produção)
