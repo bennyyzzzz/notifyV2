@@ -23,7 +23,7 @@
   "dependencies": {
     "@notify/crypto": "workspace:*",
     "pino": "10.4.0",
-    "zod": "4.6.5"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@types/node": "22.20.5",
